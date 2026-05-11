@@ -1,0 +1,264 @@
+:root {
+  --ink: #19212a;
+  --muted: #5c6674;
+  --line: #d8dee7;
+  --paper: #f7f3ea;
+  --panel: #ffffff;
+  --accent: #e54b4b;
+  --accent-dark: #bb3030;
+  --focus: #1d7a8c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: Arial, "Noto Sans KR", sans-serif;
+  background:
+    linear-gradient(135deg, rgba(29, 122, 140, 0.16), transparent 36%),
+    linear-gradient(315deg, rgba(229, 75, 75, 0.14), transparent 34%),
+    var(--paper);
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1120px, calc(100% - 32px));
+  min-height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 32px;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.roulette-stage {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+}
+
+.wheel-wrap {
+  position: relative;
+  width: min(72vw, 620px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+#wheel {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 22px 35px rgba(25, 33, 42, 0.2));
+  transition: transform 4.6s cubic-bezier(0.12, 0.78, 0.13, 1);
+}
+
+.pointer {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  z-index: 2;
+  width: 40px;
+  height: 56px;
+  background: var(--accent);
+  transform: translateX(-50%);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  filter: drop-shadow(0 5px 7px rgba(25, 33, 42, 0.24));
+}
+
+.spin-button {
+  position: absolute;
+  z-index: 3;
+  width: 132px;
+  height: 132px;
+  border: 7px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--accent);
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 14px 25px rgba(187, 48, 48, 0.34);
+}
+
+.spin-button:hover {
+  background: var(--accent-dark);
+}
+
+.spin-button:disabled {
+  cursor: wait;
+  opacity: 0.78;
+}
+
+.result-panel {
+  width: min(520px, 100%);
+  min-height: 108px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  text-align: center;
+  box-shadow: 0 18px 32px rgba(25, 33, 42, 0.1);
+}
+
+.label {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#resultText {
+  font-size: clamp(28px, 5vw, 52px);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.controls {
+  min-width: 0;
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 32px rgba(25, 33, 42, 0.1);
+}
+
+.controls header {
+  display: grid;
+  gap: 6px;
+}
+
+.controls p,
+.controls h1,
+.history h2 {
+  margin: 0;
+}
+
+.controls p {
+  color: var(--focus);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.controls h1 {
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+label {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+textarea {
+  width: 100%;
+  min-height: 238px;
+  resize: vertical;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  line-height: 1.55;
+}
+
+textarea:focus,
+button:focus-visible {
+  outline: 3px solid rgba(29, 122, 140, 0.25);
+  outline-offset: 2px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.actions button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  border-color: var(--focus);
+}
+
+.history {
+  display: grid;
+  gap: 10px;
+}
+
+.history h2 {
+  font-size: 17px;
+}
+
+#historyList {
+  min-height: 78px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 880px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 24px 0;
+  }
+
+  .controls {
+    order: -1;
+  }
+
+  .wheel-wrap {
+    width: min(92vw, 560px);
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    width: min(100% - 20px, 1120px);
+    gap: 20px;
+  }
+
+  .controls {
+    padding: 18px;
+  }
+
+  .controls h1 {
+    font-size: 24px;
+  }
+
+  .spin-button {
+    width: 104px;
+    height: 104px;
+    font-size: 20px;
+  }
+
+  .pointer {
+    width: 32px;
+    height: 46px;
+  }
+}

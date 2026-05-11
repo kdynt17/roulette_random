@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snack Roulette</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="roulette-stage" aria-label="간식 룰렛">
+        <div class="wheel-wrap">
+          <div class="pointer" aria-hidden="true"></div>
+          <canvas id="wheel" width="720" height="720" aria-label="룰렛 판"></canvas>
+          <button id="spinButton" class="spin-button" type="button">돌리기</button>
+        </div>
+        <div class="result-panel" aria-live="polite">
+          <span class="label">오늘의 간식</span>
+          <strong id="resultText">룰렛을 돌려주세요</strong>
+        </div>
+      </section>
+
+      <aside class="controls" aria-label="룰렛 설정">
+        <header>
+          <p>Snack Roulette</p>
+          <h1>간식 하나만 딱 뽑기</h1>
+        </header>
+
+        <label for="snackInput">후보 목록</label>
+        <textarea id="snackInput" spellcheck="false">초코파이
+새우깡
+포카칩
+빼빼로
+몽쉘
+오예스
+마이쮸
+초콜릿</textarea>
+
+        <div class="actions">
+          <button id="shuffleButton" type="button">섞기</button>
+          <button id="resetButton" type="button">초기화</button>
+        </div>
+
+        <section class="history" aria-label="최근 결과">
+          <h2>최근 결과</h2>
+          <ol id="historyList"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

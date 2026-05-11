@@ -1,14 +1,14 @@
 # Snack Roulette
 
-A small project for choosing snacks with a roulette-style picker.
+간식을 고르기 어려울 때 룰렛으로 하나를 뽑는 작은 웹 페이지입니다.
 
-## Ideas
+## Features
 
-- Add snack candidates
+- Edit snack candidates
 - Spin the roulette
-- Show the selected snack
-- Keep simple history for recent picks
+- Pick one random snack
+- Keep recent results on screen
 
-## Korean
+## GitHub Pages
 
-간식을 고르기 어려울 때 룰렛으로 하나를 뽑는 작은 프로젝트입니다.
+This repository deploys the static page with GitHub Pages.
