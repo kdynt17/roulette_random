@@ -1,13 +1,23 @@
 const defaults = [
-  "초코파이",
-  "새우깡",
-  "포카칩",
-  "빼빼로",
-  "몽쉘",
-  "오예스",
-  "마이쮸",
-  "초콜릿",
+  { name: "\ucd08\ucf54\ud30c\uc774", percent: 12.5 },
+  { name: "\uc0c8\uc6b0\uae61", percent: 12.5 },
+  { name: "\ud3ec\uce74\uce69", percent: 12.5 },
+  { name: "\ube7c\ube7c\ub85c", percent: 12.5 },
+  { name: "\ubabd\uc258", percent: 12.5 },
+  { name: "\uc624\uc608\uc2a4", percent: 12.5 },
+  { name: "\ub9c8\uc774\ucbb8", percent: 12.5 },
+  { name: "\ucd08\ucf5c\ub9bf", percent: 12.5 },
 ];
+
+const labels = {
+  name: "\uc0c1\ud488\uba85",
+  prize: "\uc0c1\ud488",
+  percent: "\ud655\ub960",
+  delete: "\uc0ad\uc81c",
+  spinning: "\ub3cc\uc544\uac00\ub294 \uc911...",
+  ready: "\ub8f0\ub81b\uc744 \ub3cc\ub824\uc8fc\uc138\uc694",
+  newPrize: "\uc0c8 \uc0c1\ud488",
+};
 
 const colors = [
   "#e54b4b",
@@ -22,37 +32,106 @@ const colors = [
 
 const canvas = document.querySelector("#wheel");
 const ctx = canvas.getContext("2d");
-const input = document.querySelector("#snackInput");
+const prizeRows = document.querySelector("#prizeRows");
+const addButton = document.querySelector("#addButton");
 const spinButton = document.querySelector("#spinButton");
 const shuffleButton = document.querySelector("#shuffleButton");
 const resetButton = document.querySelector("#resetButton");
 const resultText = document.querySelector("#resultText");
 const historyList = document.querySelector("#historyList");
+const totalPercent = document.querySelector("#totalPercent");
+const summary = document.querySelector(".summary");
 
 let currentRotation = 0;
 let currentItems = [];
 let history = [];
 
-function getItems() {
-  const items = input.value
-    .split(/\r?\n/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+function cloneDefaults() {
+  return defaults.map((item) => ({ ...item }));
+}
 
-  return items.length > 1 ? items : defaults;
+function normalizePercent(value) {
+  const parsed = Number.parseFloat(String(value).replace(",", "."));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function formatPercent(value) {
+  return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
+}
+
+function getRows() {
+  return [...prizeRows.querySelectorAll(".prize-row")];
+}
+
+function getItems() {
+  const items = getRows()
+    .map((row) => {
+      const name = row.querySelector(".name-field").value.trim();
+      const percent = normalizePercent(row.querySelector(".percent-field").value);
+      return { name, percent };
+    })
+    .filter((item) => item.name && item.percent > 0);
+
+  return items.length > 0 ? items : cloneDefaults();
+}
+
+function getTotal(items) {
+  return items.reduce((sum, item) => sum + item.percent, 0);
+}
+
+function renderRows(items) {
+  prizeRows.innerHTML = "";
+
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "prize-row";
+
+    const nameInput = document.createElement("input");
+    nameInput.className = "name-field";
+    nameInput.type = "text";
+    nameInput.value = item.name;
+    nameInput.setAttribute("aria-label", labels.name);
+
+    const percentInput = document.createElement("input");
+    percentInput.className = "percent-field";
+    percentInput.type = "number";
+    percentInput.min = "0";
+    percentInput.step = "0.1";
+    percentInput.value = formatPercent(item.percent);
+    percentInput.setAttribute("aria-label", `${item.name || labels.prize} ${labels.percent}`);
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "remove-button";
+    removeButton.type = "button";
+    removeButton.textContent = "\u00d7";
+    removeButton.setAttribute("aria-label", `${item.name || labels.prize} ${labels.delete}`);
+
+    row.append(nameInput, percentInput, removeButton);
+    prizeRows.append(row);
+  });
+
+  updateWheelFromRows();
+}
+
+function updateSummary(items) {
+  const total = getTotal(items);
+  totalPercent.textContent = `${formatPercent(total)}%`;
+  summary.classList.toggle("is-invalid", Math.abs(total - 100) > 0.01);
 }
 
 function drawWheel(items) {
   currentItems = items;
   const size = canvas.width;
   const center = size / 2;
-  const radius = center - 18;
-  const segment = (Math.PI * 2) / items.length;
+  const radius = center - 22;
+  const total = getTotal(items);
+  let angle = -Math.PI / 2;
 
   ctx.clearRect(0, 0, size, size);
 
   items.forEach((item, index) => {
-    const start = index * segment - Math.PI / 2;
+    const segment = (Math.PI * 2 * item.percent) / total;
+    const start = angle;
     const end = start + segment;
 
     ctx.beginPath();
@@ -68,23 +147,31 @@ function drawWheel(items) {
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
-    ctx.font = "700 30px Arial, sans-serif";
+    ctx.font = "700 34px Arial, sans-serif";
     ctx.shadowColor = "rgba(25, 33, 42, 0.35)";
     ctx.shadowBlur = 4;
-    ctx.fillText(item, radius - 34, 0, radius * 0.58);
+    ctx.fillText(`${item.name} ${formatPercent(item.percent)}%`, radius - 38, 0, radius * 0.62);
     ctx.restore();
+
+    angle = end;
   });
 
   ctx.beginPath();
   ctx.arc(center, center, radius, 0, Math.PI * 2);
-  ctx.lineWidth = 16;
+  ctx.lineWidth = 18;
   ctx.strokeStyle = "#ffffff";
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.arc(center, center, 78, 0, Math.PI * 2);
+  ctx.arc(center, center, 88, 0, Math.PI * 2);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
+}
+
+function updateWheelFromRows() {
+  const items = getItems();
+  updateSummary(items);
+  drawWheel(items);
 }
 
 function renderHistory() {
@@ -97,10 +184,40 @@ function renderHistory() {
   });
 }
 
-function pickIndex(items) {
+function randomUnit() {
   const randomValues = new Uint32Array(1);
   crypto.getRandomValues(randomValues);
-  return randomValues[0] % items.length;
+  return randomValues[0] / 2 ** 32;
+}
+
+function pickWeightedItem(items) {
+  const total = getTotal(items);
+  let cursor = randomUnit() * total;
+
+  for (let index = 0; index < items.length; index += 1) {
+    cursor -= items[index].percent;
+
+    if (cursor <= 0) {
+      return index;
+    }
+  }
+
+  return items.length - 1;
+}
+
+function getSegmentCenterDegrees(items, selectedIndex) {
+  const total = getTotal(items);
+  let start = 0;
+
+  for (let index = 0; index < selectedIndex; index += 1) {
+    start += (items[index].percent / total) * 360;
+  }
+
+  return start + (items[selectedIndex].percent / total) * 180;
+}
+
+function normalizeDegrees(value) {
+  return ((value % 360) + 360) % 360;
 }
 
 function spin() {
@@ -108,19 +225,20 @@ function spin() {
   drawWheel(items);
 
   spinButton.disabled = true;
-  resultText.textContent = "돌아가는 중...";
+  resultText.textContent = labels.spinning;
 
-  const selectedIndex = pickIndex(items);
-  const segmentDegrees = 360 / items.length;
-  const targetCenter = selectedIndex * segmentDegrees + segmentDegrees / 2;
+  const selectedIndex = pickWeightedItem(items);
+  const targetCenter = getSegmentCenterDegrees(items, selectedIndex);
+  const targetRotation = normalizeDegrees(360 - targetCenter);
+  const currentAngle = normalizeDegrees(currentRotation);
   const turns = 6 + Math.floor(Math.random() * 4);
-  const finalRotation = turns * 360 + (360 - targetCenter);
+  const delta = turns * 360 + normalizeDegrees(targetRotation - currentAngle);
 
-  currentRotation += finalRotation;
+  currentRotation += delta;
   canvas.style.transform = `rotate(${currentRotation}deg)`;
 
   window.setTimeout(() => {
-    const picked = items[selectedIndex];
+    const picked = items[selectedIndex].name;
     resultText.textContent = picked;
     history = [picked, ...history.filter((item) => item !== picked)];
     renderHistory();
@@ -136,21 +254,39 @@ function shuffleItems() {
     [shuffled[index], shuffled[target]] = [shuffled[target], shuffled[index]];
   }
 
-  input.value = shuffled.join("\n");
-  drawWheel(shuffled);
+  renderRows(shuffled);
 }
 
 function resetItems() {
-  input.value = defaults.join("\n");
   history = [];
-  resultText.textContent = "룰렛을 돌려주세요";
+  resultText.textContent = labels.ready;
   renderHistory();
-  drawWheel(defaults);
+  renderRows(cloneDefaults());
 }
 
-input.addEventListener("input", () => drawWheel(getItems()));
+function addItem() {
+  renderRows([...getItems(), { name: labels.newPrize, percent: 10 }]);
+}
+
+prizeRows.addEventListener("input", updateWheelFromRows);
+prizeRows.addEventListener("click", (event) => {
+  if (!event.target.classList.contains("remove-button")) {
+    return;
+  }
+
+  const rows = getRows();
+
+  if (rows.length <= 1) {
+    return;
+  }
+
+  event.target.closest(".prize-row").remove();
+  updateWheelFromRows();
+});
+
+addButton.addEventListener("click", addItem);
 spinButton.addEventListener("click", spin);
 shuffleButton.addEventListener("click", shuffleItems);
 resetButton.addEventListener("click", resetItems);
 
-drawWheel(getItems());
+renderRows(cloneDefaults());
