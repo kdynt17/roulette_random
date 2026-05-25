@@ -201,7 +201,7 @@ input {
   background: #fff;
 }
 
-.percent-field {
+.weight-field {
   text-align: right;
 }
 
@@ -240,10 +240,6 @@ input {
 
 .summary strong {
   font-size: 28px;
-}
-
-.summary.is-invalid strong {
-  color: var(--accent-dark);
 }
 
 input:focus,
