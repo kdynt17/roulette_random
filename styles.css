@@ -163,6 +163,29 @@ input {
   line-height: 1.15;
 }
 
+.tier-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tier-tab {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tier-tab:hover,
+.tier-tab.is-active {
+  border-color: var(--focus);
+  color: #fff;
+  background: var(--focus);
+}
+
 .prize-editor {
   min-width: 0;
   display: grid;
