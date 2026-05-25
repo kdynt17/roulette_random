@@ -76,6 +76,7 @@ const resetButton = document.querySelector("#resetButton");
 const resultText = document.querySelector("#resultText");
 const historyList = document.querySelector("#historyList");
 const totalWeight = document.querySelector("#totalWeight");
+const tierTitle = document.querySelector("#tierTitle");
 const summary = document.querySelector(".summary");
 
 let currentRotation = 0;
@@ -333,6 +334,7 @@ function switchTier(tier) {
   tierTabs.forEach((tab) => {
     tab.classList.toggle("is-active", tab.dataset.tier === tier);
   });
+  tierTitle.textContent = `${tier}P`;
 
   renderRows(itemsByTier[tier]);
 }
@@ -353,12 +355,16 @@ prizeRows.addEventListener("click", (event) => {
   updateWheelFromRows();
 });
 
+document.addEventListener("click", (event) => {
+  const tierTab = event.target.closest(".tier-tab");
+
+  if (tierTab) {
+    switchTier(tierTab.dataset.tier);
+  }
+});
 addButton.addEventListener("click", addItem);
 spinButton.addEventListener("click", spin);
 shuffleButton.addEventListener("click", shuffleItems);
 resetButton.addEventListener("click", resetItems);
-tierTabs.forEach((tab) => {
-  tab.addEventListener("click", () => switchTier(tab.dataset.tier));
-});
 
 renderRows(itemsByTier[activeTier]);
