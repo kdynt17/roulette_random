@@ -1,18 +1,18 @@
 const defaults = [
-  { name: "\ucd08\ucf54\ud30c\uc774", percent: 12.5 },
-  { name: "\uc0c8\uc6b0\uae61", percent: 12.5 },
-  { name: "\ud3ec\uce74\uce69", percent: 12.5 },
-  { name: "\ube7c\ube7c\ub85c", percent: 12.5 },
-  { name: "\ubabd\uc258", percent: 12.5 },
-  { name: "\uc624\uc608\uc2a4", percent: 12.5 },
-  { name: "\ub9c8\uc774\ucbb8", percent: 12.5 },
-  { name: "\ucd08\ucf5c\ub9bf", percent: 12.5 },
+  { name: "\ucd08\ucf54\ud30c\uc774", weight: 1 },
+  { name: "\uc0c8\uc6b0\uae61", weight: 1 },
+  { name: "\ud3ec\uce74\uce69", weight: 1 },
+  { name: "\ube7c\ube7c\ub85c", weight: 1 },
+  { name: "\ubabd\uc258", weight: 1 },
+  { name: "\uc624\uc608\uc2a4", weight: 1 },
+  { name: "\ub9c8\uc774\ucbb8", weight: 1 },
+  { name: "\ucd08\ucf5c\ub9bf", weight: 1 },
 ];
 
 const labels = {
   name: "\uc0c1\ud488\uba85",
   prize: "\uc0c1\ud488",
-  percent: "\ud655\ub960",
+  weight: "\ube44\uc728",
   delete: "\uc0ad\uc81c",
   spinning: "\ub3cc\uc544\uac00\ub294 \uc911...",
   ready: "\ub8f0\ub81b\uc744 \ub3cc\ub824\uc8fc\uc138\uc694",
@@ -39,7 +39,7 @@ const shuffleButton = document.querySelector("#shuffleButton");
 const resetButton = document.querySelector("#resetButton");
 const resultText = document.querySelector("#resultText");
 const historyList = document.querySelector("#historyList");
-const totalPercent = document.querySelector("#totalPercent");
+const totalWeight = document.querySelector("#totalWeight");
 const summary = document.querySelector(".summary");
 
 let currentRotation = 0;
@@ -50,13 +50,17 @@ function cloneDefaults() {
   return defaults.map((item) => ({ ...item }));
 }
 
-function normalizePercent(value) {
+function normalizeWeight(value) {
   const parsed = Number.parseFloat(String(value).replace(",", "."));
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
-function formatPercent(value) {
+function formatNumber(value) {
   return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
+}
+
+function formatPercent(weight, total) {
+  return formatNumber((weight / total) * 100);
 }
 
 function getRows() {
@@ -67,16 +71,16 @@ function getItems() {
   const items = getRows()
     .map((row) => {
       const name = row.querySelector(".name-field").value.trim();
-      const percent = normalizePercent(row.querySelector(".percent-field").value);
-      return { name, percent };
+      const weight = normalizeWeight(row.querySelector(".weight-field").value);
+      return { name, weight };
     })
-    .filter((item) => item.name && item.percent > 0);
+    .filter((item) => item.name && item.weight > 0);
 
   return items.length > 0 ? items : cloneDefaults();
 }
 
 function getTotal(items) {
-  return items.reduce((sum, item) => sum + item.percent, 0);
+  return items.reduce((sum, item) => sum + item.weight, 0);
 }
 
 function renderRows(items) {
@@ -92,13 +96,13 @@ function renderRows(items) {
     nameInput.value = item.name;
     nameInput.setAttribute("aria-label", labels.name);
 
-    const percentInput = document.createElement("input");
-    percentInput.className = "percent-field";
-    percentInput.type = "number";
-    percentInput.min = "0";
-    percentInput.step = "0.1";
-    percentInput.value = formatPercent(item.percent);
-    percentInput.setAttribute("aria-label", `${item.name || labels.prize} ${labels.percent}`);
+    const weightInput = document.createElement("input");
+    weightInput.className = "weight-field";
+    weightInput.type = "number";
+    weightInput.min = "0";
+    weightInput.step = "0.1";
+    weightInput.value = formatNumber(item.weight);
+    weightInput.setAttribute("aria-label", `${item.name || labels.prize} ${labels.weight}`);
 
     const removeButton = document.createElement("button");
     removeButton.className = "remove-button";
@@ -106,7 +110,7 @@ function renderRows(items) {
     removeButton.textContent = "\u00d7";
     removeButton.setAttribute("aria-label", `${item.name || labels.prize} ${labels.delete}`);
 
-    row.append(nameInput, percentInput, removeButton);
+    row.append(nameInput, weightInput, removeButton);
     prizeRows.append(row);
   });
 
@@ -114,9 +118,8 @@ function renderRows(items) {
 }
 
 function updateSummary(items) {
-  const total = getTotal(items);
-  totalPercent.textContent = `${formatPercent(total)}%`;
-  summary.classList.toggle("is-invalid", Math.abs(total - 100) > 0.01);
+  totalWeight.textContent = formatNumber(getTotal(items));
+  summary.classList.remove("is-invalid");
 }
 
 function drawWheel(items) {
@@ -130,7 +133,7 @@ function drawWheel(items) {
   ctx.clearRect(0, 0, size, size);
 
   items.forEach((item, index) => {
-    const segment = (Math.PI * 2 * item.percent) / total;
+    const segment = (Math.PI * 2 * item.weight) / total;
     const start = angle;
     const end = start + segment;
 
@@ -150,7 +153,7 @@ function drawWheel(items) {
     ctx.font = "700 34px Arial, sans-serif";
     ctx.shadowColor = "rgba(25, 33, 42, 0.35)";
     ctx.shadowBlur = 4;
-    ctx.fillText(`${item.name} ${formatPercent(item.percent)}%`, radius - 38, 0, radius * 0.62);
+    ctx.fillText(`${item.name} ${formatPercent(item.weight, total)}%`, radius - 38, 0, radius * 0.62);
     ctx.restore();
 
     angle = end;
@@ -195,7 +198,7 @@ function pickWeightedItem(items) {
   let cursor = randomUnit() * total;
 
   for (let index = 0; index < items.length; index += 1) {
-    cursor -= items[index].percent;
+    cursor -= items[index].weight;
 
     if (cursor <= 0) {
       return index;
@@ -210,10 +213,10 @@ function getSegmentCenterDegrees(items, selectedIndex) {
   let start = 0;
 
   for (let index = 0; index < selectedIndex; index += 1) {
-    start += (items[index].percent / total) * 360;
+    start += (items[index].weight / total) * 360;
   }
 
-  return start + (items[selectedIndex].percent / total) * 180;
+  return start + (items[selectedIndex].weight / total) * 180;
 }
 
 function normalizeDegrees(value) {
@@ -265,7 +268,7 @@ function resetItems() {
 }
 
 function addItem() {
-  renderRows([...getItems(), { name: labels.newPrize, percent: 10 }]);
+  renderRows([...getItems(), { name: labels.newPrize, weight: 1 }]);
 }
 
 prizeRows.addEventListener("input", updateWheelFromRows);
