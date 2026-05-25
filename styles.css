@@ -25,31 +25,33 @@ body {
 }
 
 button,
-textarea {
+input {
   font: inherit;
 }
 
 .app-shell {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1480px, calc(100% - 32px));
   min-height: 100vh;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 32px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 24px;
   align-items: center;
-  padding: 32px 0;
+  padding: 24px 0;
 }
 
 .roulette-stage {
   min-width: 0;
   display: grid;
-  justify-items: center;
-  gap: 24px;
+  grid-template-columns: minmax(0, auto) minmax(300px, 420px);
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
 }
 
 .wheel-wrap {
   position: relative;
-  width: min(72vw, 620px);
+  width: min(76vh, 68vw, 820px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -68,8 +70,8 @@ textarea {
   top: -4px;
   left: 50%;
   z-index: 2;
-  width: 40px;
-  height: 56px;
+  width: 48px;
+  height: 68px;
   background: var(--accent);
   transform: translateX(-50%);
   clip-path: polygon(50% 100%, 0 0, 100% 0);
@@ -79,13 +81,13 @@ textarea {
 .spin-button {
   position: absolute;
   z-index: 3;
-  width: 132px;
-  height: 132px;
-  border: 7px solid #fff;
+  width: 150px;
+  height: 150px;
+  border: 8px solid #fff;
   border-radius: 50%;
   color: #fff;
   background: var(--accent);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 14px 25px rgba(187, 48, 48, 0.34);
@@ -101,27 +103,26 @@ textarea {
 }
 
 .result-panel {
-  width: min(520px, 100%);
-  min-height: 108px;
+  min-height: 158px;
   display: grid;
   align-content: center;
-  gap: 8px;
-  padding: 22px 26px;
+  gap: 10px;
+  padding: 24px 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.84);
   text-align: center;
   box-shadow: 0 18px 32px rgba(25, 33, 42, 0.1);
 }
 
 .label {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 #resultText {
-  font-size: clamp(28px, 5vw, 52px);
+  font-size: clamp(34px, 4.6vw, 72px);
   line-height: 1.08;
   overflow-wrap: anywhere;
 }
@@ -129,8 +130,10 @@ textarea {
 .controls {
   min-width: 0;
   display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 140px 330px;
   gap: 18px;
-  padding: 24px;
+  align-items: start;
+  padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.9);
@@ -156,29 +159,94 @@ textarea {
 }
 
 .controls h1 {
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1.15;
 }
 
-label {
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 700;
+.prize-editor {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
 }
 
-textarea {
+.editor-head,
+.prize-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 96px 42px;
+  gap: 8px;
+  align-items: center;
+}
+
+.editor-head {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.prize-rows {
+  max-height: 182px;
+  display: grid;
+  gap: 8px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.prize-row input {
   width: 100%;
-  min-height: 238px;
-  resize: vertical;
-  padding: 14px;
+  min-height: 42px;
+  padding: 9px 11px;
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
   background: #fff;
-  line-height: 1.55;
 }
 
-textarea:focus,
+.percent-field {
+  text-align: right;
+}
+
+.remove-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.remove-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.summary {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.summary span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.summary strong {
+  font-size: 28px;
+}
+
+.summary.is-invalid strong {
+  color: var(--accent-dark);
+}
+
+input:focus,
 button:focus-visible {
   outline: 3px solid rgba(29, 122, 140, 0.25);
   outline-offset: 2px;
@@ -186,8 +254,9 @@ button:focus-visible {
 
 .actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  grid-column: 2 / 4;
 }
 
 .actions button {
@@ -221,44 +290,61 @@ button:focus-visible {
   line-height: 1.7;
 }
 
-@media (max-width: 880px) {
-  .app-shell {
+@media (max-width: 1120px) {
+  .roulette-stage {
     grid-template-columns: 1fr;
-    align-items: start;
-    padding: 24px 0;
-  }
-
-  .controls {
-    order: -1;
+    gap: 18px;
   }
 
   .wheel-wrap {
-    width: min(92vw, 560px);
+    width: min(70vh, 92vw, 760px);
+  }
+
+  .result-panel {
+    width: min(640px, 100%);
+    min-height: 118px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    grid-column: auto;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 620px) {
   .app-shell {
-    width: min(100% - 20px, 1120px);
+    width: min(100% - 20px, 1480px);
     gap: 20px;
   }
 
   .controls {
-    padding: 18px;
+    padding: 16px;
   }
 
   .controls h1 {
     font-size: 24px;
   }
 
+  .editor-head,
+  .prize-row {
+    grid-template-columns: minmax(0, 1fr) 82px 38px;
+  }
+
   .spin-button {
-    width: 104px;
-    height: 104px;
+    width: 106px;
+    height: 106px;
     font-size: 20px;
   }
 
   .pointer {
-    width: 32px;
-    height: 46px;
+    width: 34px;
+    height: 48px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
   }
 }
