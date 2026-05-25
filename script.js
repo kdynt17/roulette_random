@@ -199,10 +199,12 @@ function drawWheel(items) {
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
-    ctx.font = "700 34px Arial, sans-serif";
+    ctx.font = "700 28px Arial, sans-serif";
     ctx.shadowColor = "rgba(25, 33, 42, 0.35)";
     ctx.shadowBlur = 4;
-    ctx.fillText(`${formatPercent(item.weight, total)}%`, radius - 38, 0, radius * 0.62);
+    ctx.fillText(item.name, radius - 38, -16, radius * 0.62);
+    ctx.font = "800 23px Arial, sans-serif";
+    ctx.fillText(`${formatPercent(item.weight, total)}%`, radius - 38, 18, radius * 0.62);
     ctx.restore();
 
     angle = end;
