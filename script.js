@@ -63,6 +63,22 @@ const colors = [
   "#3d5a80",
   "#8ab17d",
   "#d67ab1",
+  "#2f80ed",
+  "#f2994a",
+  "#27ae60",
+  "#9b51e0",
+  "#eb5757",
+  "#56ccf2",
+  "#bb6bd9",
+  "#219653",
+  "#f2c94c",
+  "#6fcf97",
+  "#2d9cdb",
+  "#b16a5b",
+  "#ef476f",
+  "#06d6a0",
+  "#118ab2",
+  "#ff9f1c",
 ];
 
 const canvas = document.querySelector("#wheel");
@@ -192,6 +208,10 @@ function drawWheel(items) {
     ctx.closePath();
     ctx.fillStyle = colors[index % colors.length];
     ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.82)";
+    ctx.stroke();
 
     ctx.save();
     ctx.translate(center, center);
@@ -199,12 +219,15 @@ function drawWheel(items) {
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#ffffff";
-    ctx.font = "700 28px Arial, sans-serif";
+    ctx.font = "800 25px Arial, sans-serif";
     ctx.shadowColor = "rgba(25, 33, 42, 0.35)";
     ctx.shadowBlur = 4;
-    ctx.fillText(item.name, radius - 38, -16, radius * 0.62);
-    ctx.font = "800 23px Arial, sans-serif";
-    ctx.fillText(`${formatPercent(item.weight, total)}%`, radius - 38, 18, radius * 0.62);
+    ctx.fillText(
+      `${item.name} ${formatPercent(item.weight, total)}%`,
+      radius - 38,
+      0,
+      radius * 0.72
+    );
     ctx.restore();
 
     angle = end;
