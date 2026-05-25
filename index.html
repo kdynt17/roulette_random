@@ -3,49 +3,54 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Snack Roulette</title>
+    <title>Prize Roulette</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <main class="app-shell">
-      <section class="roulette-stage" aria-label="간식 룰렛">
+      <section class="roulette-stage" aria-label="&#49345;&#54408; &#47344;&#47131;">
         <div class="wheel-wrap">
           <div class="pointer" aria-hidden="true"></div>
-          <canvas id="wheel" width="720" height="720" aria-label="룰렛 판"></canvas>
-          <button id="spinButton" class="spin-button" type="button">돌리기</button>
+          <canvas id="wheel" width="900" height="900" aria-label="&#47344;&#47131; &#54032;"></canvas>
+          <button id="spinButton" class="spin-button" type="button">&#46028;&#47532;&#44592;</button>
         </div>
         <div class="result-panel" aria-live="polite">
-          <span class="label">오늘의 간식</span>
-          <strong id="resultText">룰렛을 돌려주세요</strong>
+          <span class="label">&#50724;&#45720;&#51032; &#49345;&#54408;</span>
+          <strong id="resultText">&#47344;&#47131;&#51012; &#46028;&#47140;&#51452;&#49464;&#50836;</strong>
         </div>
       </section>
 
-      <aside class="controls" aria-label="룰렛 설정">
+      <section class="controls" aria-label="&#47344;&#47131; &#49444;&#51221;">
         <header>
-          <p>Snack Roulette</p>
-          <h1>간식 하나만 딱 뽑기</h1>
+          <p>Prize Roulette</p>
+          <h1>&#49345;&#54408;&#44284; &#45817;&#52392; &#54869;&#47456;</h1>
         </header>
 
-        <label for="snackInput">후보 목록</label>
-        <textarea id="snackInput" spellcheck="false">초코파이
-새우깡
-포카칩
-빼빼로
-몽쉘
-오예스
-마이쮸
-초콜릿</textarea>
-
-        <div class="actions">
-          <button id="shuffleButton" type="button">섞기</button>
-          <button id="resetButton" type="button">초기화</button>
+        <div class="prize-editor">
+          <div class="editor-head" aria-hidden="true">
+            <span>&#49345;&#54408;</span>
+            <span>&#54869;&#47456;</span>
+            <span></span>
+          </div>
+          <div id="prizeRows" class="prize-rows"></div>
         </div>
 
-        <section class="history" aria-label="최근 결과">
-          <h2>최근 결과</h2>
+        <div class="summary" aria-live="polite">
+          <span>&#51204;&#52404; &#54869;&#47456;</span>
+          <strong id="totalPercent">100%</strong>
+        </div>
+
+        <div class="actions">
+          <button id="addButton" type="button">&#49345;&#54408; &#52628;&#44032;</button>
+          <button id="shuffleButton" type="button">&#49438;&#44592;</button>
+          <button id="resetButton" type="button">&#52488;&#44592;&#54868;</button>
+        </div>
+
+        <section class="history" aria-label="&#52572;&#44540; &#44208;&#44284;">
+          <h2>&#52572;&#44540; &#44208;&#44284;</h2>
           <ol id="historyList"></ol>
         </section>
-      </aside>
+      </section>
     </main>
 
     <script src="script.js"></script>
