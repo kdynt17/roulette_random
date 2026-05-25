@@ -208,9 +208,9 @@ function drawWheel(items) {
     ctx.closePath();
     ctx.fillStyle = colors[index % colors.length];
     ctx.fill();
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 1.5;
     ctx.lineJoin = "round";
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.82)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.65)";
     ctx.stroke();
 
     ctx.save();
