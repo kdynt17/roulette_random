@@ -81,6 +81,8 @@ const colors = [
   "#ff9f1c",
 ];
 
+const maxHistoryItems = 10;
+
 const canvas = document.querySelector("#wheel");
 const ctx = canvas.getContext("2d");
 const prizeRows = document.querySelector("#prizeRows");
@@ -255,7 +257,7 @@ function updateWheelFromRows() {
 function renderHistory() {
   historyList.innerHTML = "";
 
-  history.slice(0, 5).forEach((item) => {
+  history.slice(0, maxHistoryItems).forEach((item) => {
     const entry = document.createElement("li");
     entry.textContent = item;
     historyList.append(entry);
