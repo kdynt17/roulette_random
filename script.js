@@ -320,7 +320,7 @@ function spin() {
   window.setTimeout(() => {
     const picked = items[selectedIndex].name;
     resultText.textContent = picked;
-    history = [picked, ...history.filter((item) => item !== picked)];
+    history = [picked, ...history];
     renderHistory();
     spinButton.disabled = false;
   }, 4700);
