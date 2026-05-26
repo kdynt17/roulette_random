@@ -81,8 +81,6 @@ const colors = [
   "#ff9f1c",
 ];
 
-const maxHistoryItems = 10;
-
 const canvas = document.querySelector("#wheel");
 const ctx = canvas.getContext("2d");
 const prizeRows = document.querySelector("#prizeRows");
@@ -100,6 +98,8 @@ const summary = document.querySelector(".summary");
 let currentRotation = 0;
 let currentItems = [];
 let history = [];
+let isSpinning = false;
+let spinTimer = null;
 let activeTier = "300";
 let itemsByTier = Object.fromEntries(
   Object.entries(presets).map(([tier, items]) => [tier, cloneItems(items)])
@@ -257,7 +257,7 @@ function updateWheelFromRows() {
 function renderHistory() {
   historyList.innerHTML = "";
 
-  history.slice(0, maxHistoryItems).forEach((item) => {
+  history.forEach((item) => {
     const entry = document.createElement("li");
     entry.textContent = item;
     historyList.append(entry);
@@ -300,11 +300,33 @@ function normalizeDegrees(value) {
   return ((value % 360) + 360) % 360;
 }
 
+function setSpinningState(spinning) {
+  isSpinning = spinning;
+  spinButton.disabled = spinning;
+  addButton.disabled = spinning;
+  shuffleButton.disabled = spinning;
+  tierTabs.forEach((tab) => {
+    tab.disabled = spinning;
+  });
+}
+
+function resetWheelRotation() {
+  currentRotation = 0;
+  canvas.style.transition = "none";
+  canvas.style.transform = "rotate(0deg)";
+  canvas.offsetHeight;
+  canvas.style.transition = "";
+}
+
 function spin() {
+  if (isSpinning) {
+    return;
+  }
+
   const items = getItems();
   drawWheel(items);
 
-  spinButton.disabled = true;
+  setSpinningState(true);
   resultText.textContent = labels.spinning;
 
   const selectedIndex = pickWeightedItem(items);
@@ -317,12 +339,13 @@ function spin() {
   currentRotation += delta;
   canvas.style.transform = `rotate(${currentRotation}deg)`;
 
-  window.setTimeout(() => {
+  spinTimer = window.setTimeout(() => {
     const picked = items[selectedIndex].name;
     resultText.textContent = picked;
-    history = [picked, ...history];
+    history = [...history, picked];
     renderHistory();
-    spinButton.disabled = false;
+    spinTimer = null;
+    setSpinningState(false);
   }, 4700);
 }
 
@@ -338,6 +361,13 @@ function shuffleItems() {
 }
 
 function resetItems() {
+  if (spinTimer !== null) {
+    window.clearTimeout(spinTimer);
+    spinTimer = null;
+  }
+
+  setSpinningState(false);
+  resetWheelRotation();
   history = [];
   resultText.textContent = labels.ready;
   renderHistory();
@@ -350,13 +380,13 @@ function addItem() {
 }
 
 function switchTier(tier) {
+  if (isSpinning || tier === activeTier) {
+    return;
+  }
+
   saveActiveRows();
   activeTier = tier;
-  currentRotation = 0;
-  canvas.style.transform = "rotate(0deg)";
-  resultText.textContent = labels.ready;
-  history = [];
-  renderHistory();
+  resetWheelRotation();
 
   tierTabs.forEach((tab) => {
     tab.classList.toggle("is-active", tab.dataset.tier === tier);

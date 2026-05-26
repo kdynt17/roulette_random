@@ -186,6 +186,12 @@ input {
   background: var(--focus);
 }
 
+.tier-tab:disabled,
+.actions button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .tier-status {
   display: grid;
   gap: 6px;
